@@ -5,9 +5,12 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Agenda agenda1 = new Agenda();
-        Contato contatoGeral = new Contato();
-        menu(agenda1);
+        agenda1.lerAgenda();
 
+        Contato contatoGeral = new Contato();
+
+        menu(agenda1);
+        agenda1.escreverAgenda();
     }
 
 
@@ -35,6 +38,7 @@ public class Main {
                     break;
                 case 3:
                     agenda.editarContato();
+                    pausa();
                     break;
                 case 4:
                     agenda.exibirTelefones();
@@ -47,7 +51,6 @@ public class Main {
                     System.out.println("Opção inválida. Escolha uma das opções do menu.");
             }
         }
-
     }
     public static void pausa(){
         Scanner sc = new Scanner(System.in);

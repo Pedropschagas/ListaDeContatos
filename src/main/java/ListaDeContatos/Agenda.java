@@ -1,8 +1,11 @@
 package ListaDeContatos;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class Agenda {
     private Long idListaContato = 0L;
@@ -15,6 +18,11 @@ public class Agenda {
 
     public void setContatos(List<Contato> contatos) {
         this.contatos = contatos;
+    }
+
+    public Long setIdListaContato() {
+        this.idListaContato += 1;
+        return getIdListaContato();
     }
 
 
@@ -45,6 +53,9 @@ public class Agenda {
                         ">>>> Contatos <<<<\n" +
                         "Id | Nome"
         );
+
+
+        Collections.sort(this.contatos, Comparator.comparing(Contato::getNome));
         if (this.contatos.size() >= 1)
             for (Contato contato : this.contatos) {
                 System.out.println(contato.getIdContato() + " | " + contato.getNome() + " " + contato.getSobreNome());
@@ -72,14 +83,80 @@ public class Agenda {
         System.out.println(aux.getIdContato() + " | " + aux.getNome() + " " + aux.getSobreNome());
         if (!aux.getLista().isEmpty())
             for (Telefone numero : aux.getLista()) {
-                System.out.println(quantidadeEspacos + "| " + numero.getIdTelefone() + " - " + numero.getNumero());
+                System.out.println(quantidadeEspacos + "| " + numero.getIdTelefone() + " - " + numero.getDdd() + numero.getNumero());
             }
     }
+
+    public void escreverAgenda() {
+        try (PrintWriter escrever = new PrintWriter(new FileWriter("Agenda.txt"))) {
+            for (Contato cont : this.contatos) {
+                escrever.print(cont.getIdContato() + "," + cont.getNome() + "," + cont.getSobreNome() + "|");
+                if (cont.getLista().isEmpty()) {
+                    escrever.print(".\n");
+                } else {
+                    for (Telefone numero : cont.getLista()) {
+                        escrever.print(numero.getIdTelefone() + "," + numero.getDdd() + numero.getNumero() + "|");
+                    }
+                escrever.print("\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void lerAgenda(){
+        try(BufferedReader br = new BufferedReader(new FileReader("Agenda.txt"))){
+            String linha;
+
+            while((linha = br.readLine()) != null){
+
+                String linhaFinal = linha;
+                String[] dadosSeparados = linhaFinal.split("\\|");
+                String[] nomeEsobrenome = dadosSeparados[0].split(",");
+
+
+                //######### Adicionar dados do Contato #########
+                Contato novoContato = new Contato();
+                novoContato.setIdContato(Long.valueOf(nomeEsobrenome[0]));
+                novoContato.setNome(nomeEsobrenome[1]);
+                novoContato.setSNome(nomeEsobrenome[2]);
+
+
+                //######### Adicionar Telefones do Contato #########
+                if(dadosSeparados.length > 1){
+                    for(int i = 1; i < dadosSeparados.length;i++){
+                        String[] idENumero = dadosSeparados[i].split(",");
+                        String id = idENumero[0];
+                        String numEddd = idENumero[1];
+                        novoContato.insereTelefone(Long.valueOf(id), numEddd.substring(0, 2), Long.valueOf(numEddd.substring(2)));
+                    }
+                }
+                this.contatos.add(novoContato);
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+//    public void lerAgenda();
 
     //Verificações
     public static boolean validaString(String string) {
         if (!string.trim().isEmpty() && string.matches("[a-zA-Z]+")) {
             return true;
+        }
+        return false;
+    }
+
+    private boolean numeroExistente(Telefone novo) {
+        for (Contato cont : this.contatos) {
+            for (Telefone tel : cont.getLista()) {
+                if (Objects.equals(tel.getDdd(), novo.getDdd()) && Objects.equals(tel.getNumero(), novo.getNumero())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -110,16 +187,24 @@ public class Agenda {
             string = sc.nextLine();
         }
         novoContato.setSNome(string);
-        novoContato.setIdContato(idListaContato);
-        novoContato.adicionarTeleFone();
-        this.contatos.add(novoContato);
+        novoContato.setIdContato(setIdListaContato());
 
-        //extraindo indice do elementoe transformando em id
+        Telefone novo = novoContato.recebeTelefone();
 
-        long idEhIndice = ((long) this.contatos.indexOf(novoContato) + 1);
-        novoContato.setIdContato(idEhIndice);
-        System.out.println("Contato adicionado com Sucesso!\n\n");
 
+        if (this.contatos.size() == 0) {
+            novo.setIdTelefone(novoContato.setIdListaTel());
+            novoContato.setLista(novo);
+            this.contatos.add(novoContato);
+            System.out.println("Contato adicionado com Sucesso!\n\n");
+        } else if (!numeroExistente(novo)) {
+            novo.setIdTelefone(novoContato.setIdListaTel());
+            novoContato.setLista(novo);
+            this.contatos.add(novoContato);
+            System.out.println("Contato adicionado com Sucesso!\n\n");
+        } else {
+            System.out.println("Telefone já cadastrado. Tente novamente.");
+        }
     }
 
     public void removerContato() {
@@ -130,15 +215,8 @@ public class Agenda {
 
         if (buscado == null) {
             System.out.println("Contato não encontrado.");
-        } else if (this.contatos.size() == 1 || buscado == this.contatos.get(this.contatos.size() - 1)) {
-            this.contatos.remove(buscado);
-            System.out.println("Contato removido.");
         } else {
             this.contatos.remove(buscado);
-            for (Contato cont : this.contatos) {
-                long idEhIndice = ((long) this.contatos.indexOf(cont) + 1);
-                cont.setIdContato(idEhIndice);
-            }
             System.out.println("Contato removido.");
         }
     }
@@ -155,18 +233,21 @@ public class Agenda {
             for (Contato cont : contatos) {
                 if (cont == buscado) {
                     int opcao = 0;
-                    while (opcao != 4) {
+                    while (opcao != 6) {
                         System.out.println("Digite:\n" +
                                 "1 - Para alterar nome;\n" +
                                 "2 - Para alterar sobrenome\n" +
                                 "3 - Para alterar um telefone\n" +
-                                "4 - Voltar ao menu anterior");
+                                "4 - Para adicionar um telefone a um contato\n" +
+                                "5 - Para remover um telefone do contato\n" +
+                                "6 - Voltar ao menu anterior");
 
                         opcao = sc.nextInt();
+
                         switch (opcao) {
                             case 1:
                                 System.out.println("Informe um novo nome para o contato: ");
-                                String nome = sc.nextLine();
+                                String nome = sc.next();
                                 if (validaString(nome)) {
                                     cont.setNome(nome);
                                 } else {
@@ -175,7 +256,7 @@ public class Agenda {
                                 break;
                             case 2:
                                 System.out.println("Informe um novo sobrenome para o contato: ");
-                                String sobrenome = sc.nextLine();
+                                String sobrenome = sc.next();
                                 if (validaString(sobrenome)) {
                                     cont.setSNome(sobrenome);
                                 } else {
@@ -185,8 +266,23 @@ public class Agenda {
                             case 3:
                                 cont.editarTelefone();
                                 break;
+                            case 4:
+                                Telefone novo = cont.recebeTelefone();
+                                if (!numeroExistente(novo)) {
+                                    novo.setIdTelefone(cont.setIdListaTel());
+                                    cont.setLista(novo);
+                                } else {
+                                    System.out.println("Numero já cadastrado. Tente novamente.");
+                                }
+                                break;
+                            case 5:
+                                cont.removerTelefone();
+                                break;
+                            case 6:
+                                break;
                             default:
                                 System.out.println("Opção inválida. Escolha uma das opções do menu.");
+                                break;
                         }
                     }
                 }

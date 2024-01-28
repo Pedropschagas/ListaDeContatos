@@ -9,6 +9,7 @@ public class Contato {
     private String nome;
     private String sobreNome;
     private List<Telefone> lista;
+    private Long idListaTel = 0L;
 
     public Contato() {
         this.nome = new String();
@@ -28,9 +29,22 @@ public class Contato {
         this.sobreNome = sNome;
     }
 
+    public void setLista(Telefone telefone){
+        this.lista.add(telefone);
+    }
+
+    public Long setIdListaTel(){
+        this.idListaTel += 1;
+        return getIdListaTel();
+    }
+
 
     public Long getIdContato() {
         return idContato;
+    }
+
+    public Long getIdListaTel() {
+        return idListaTel;
     }
 
     public String getNome() {
@@ -47,6 +61,14 @@ public class Contato {
     }
 
     //utilidades
+
+    public void insereTelefone(Long id, String ddd, Long numero){
+        Telefone novoTelefone = new Telefone();
+        novoTelefone.setIdTelefone(id);
+        novoTelefone.setDdd(ddd);
+        novoTelefone.setNumero(numero);
+        this.lista.add(novoTelefone);
+    }
 
     public String extrairDdd(String numero) {return numero.substring(0, 2);}
 
@@ -77,23 +99,12 @@ public class Contato {
         return false;
     }
 
-    private boolean numeroExistente(String numero) {
-        String ddd = numero.substring(0, 2);
-        Long numTelefone = Long.valueOf(numero.substring(2));
-
-        for (Telefone n : this.lista) {
-            if (ddd.equals(n.getDdd()) && numTelefone == n.getNumero()) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 
     //Adição, Remoção e Edição de telefones.
 
 
-    public void adicionarTeleFone() {
+    public Telefone recebeTelefone() {
         Telefone novoFone = new Telefone();
         Scanner sc = new Scanner(System.in);
         System.out.println("Informe o número, com o ddd, do novo telefone: ");
@@ -111,17 +122,12 @@ public class Contato {
             numero = sc.nextLine();
         }
 
+        novoFone.setDdd(extrairDdd(numero));
+        novoFone.setNumero(extrairNumero(numero));
 
-        if (numeroExistente(numero)) {
-            System.out.println("Telefone já cadastrado. Refaça a operação.");
-        } else {
-            novoFone.setDdd(extrairDdd(numero));
-            novoFone.setNumero(extrairNumero(numero));
-            this.lista.add(novoFone);
-            long idEhIndice = ((long) this.lista.indexOf(novoFone) + 1);
-            novoFone.setIdTelefone(idEhIndice);
-        }
+        return novoFone;
     }
+
 
     public void editarTelefone() {
         Scanner sc = new Scanner(System.in);
@@ -148,21 +154,15 @@ public class Contato {
 
     public void removerTelefone() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Informe o id do telefone que deseja editar: ");
+        System.out.println("Informe o id do telefone que deseja remover: ");
         Long id = sc.nextLong();
-
 
         if (buscaTelefone(id) == null) {
             System.out.println("id não encontrado");
         } else {
-            for (Telefone tel : this.lista) {
-                if (buscaTelefone(id) == tel) {
-                    tel = null;
-                }
-            }
-
+            Telefone aux = buscaTelefone(id);
+            this.lista.remove(aux);
+            System.out.println("Número de telefone removido.");
         }
-
-
     }
 }

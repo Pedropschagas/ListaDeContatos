@@ -5,50 +5,42 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Agenda agenda1 = new Agenda();
+        Contato contatoGeral = new Contato();
         menu(agenda1);
 
     }
 
-    public static void limparConsole() {
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    public static void menu(Agenda novaAgenda) {
+    //Funções utilitárias para o programa principal.
+
+    public static void menu(Agenda agenda) {
         Scanner sc = new Scanner(System.in);
+        Contato Aux_contato = new Contato();
         int menu = 0;
 
-        while (menu != 4) {
-            System.out.println(
-                    "##################\n" +
-                            "##### AGENDA #####\n" +
-                            "##################\n" +
-                            ">>>> Contatos <<<<\n" +
-                            "Id | Nome\n" +
-                            ">>>> Menu <<<<\n" +
-                            "1 - Adicionar Contato\n" +
-                            "2 - Remover Contato\n" +
-                            "3 - Editar Contato\n" +
-                            "4 - Sair");
+        while (menu != 5) {
+
+            agenda.exibirAgenda();
 
             menu = sc.nextInt();
 
             switch (menu) {
                 case 1:
-                    limparConsole();
-                    System.out.println("Opção 1 selecionada");
-                    novaAgenda.adicionarContato();
+                    agenda.adicionarContato();
+                    pausa();
                     break;
                 case 2:
-                    System.out.println("Opção 2 selecionada");
+                    agenda.removerContato();
+                    pausa();
                     break;
                 case 3:
-                    System.out.println("Opção 3 selecionada");
+                    agenda.editarContato();
                     break;
                 case 4:
+                    agenda.exibirTelefones();
+                    pausa();
+                    break;
+                case 5:
                     System.out.println("Até Logo!!");
                     break;
                 default:
@@ -56,6 +48,11 @@ public class Main {
             }
         }
 
+    }
+    public static void pausa(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Aperte Enter para retornar ao menu inicial");
+        sc.nextLine();
     }
 
 

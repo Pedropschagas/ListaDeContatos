@@ -14,8 +14,6 @@ public class Contato {
         this.nome = new String();
         this.sobreNome = new String();
         this.lista = new ArrayList<>();
-        this.idContato++;
-
     }
 
     public void setIdContato(Long idContact) {
@@ -44,19 +42,15 @@ public class Contato {
     }
 
 
-    public List<Telefone> getTelefones() {
+    public List<Telefone> getLista() {
         return lista;
     }
 
     //utilidades
 
-    public String extrairDdd(String numero) {
-        return numero.substring(0, 2);
-    }
+    public String extrairDdd(String numero) {return numero.substring(0, 2);}
 
-    public Long extrairNumero(String numero) {
-        return Long.valueOf(numero.substring(2));
-    }
+    public Long extrairNumero(String numero) {return Long.valueOf(numero.substring(2));}
 
     private Telefone buscaTelefone(Long idTelefone) {
         for (Telefone telefone : this.lista) {
@@ -100,6 +94,7 @@ public class Contato {
 
 
     public void adicionarTeleFone() {
+        Telefone novoFone = new Telefone();
         Scanner sc = new Scanner(System.in);
         System.out.println("Informe o número, com o ddd, do novo telefone: ");
         String numero = sc.nextLine();
@@ -117,20 +112,16 @@ public class Contato {
         }
 
 
-        Telefone novoFone = null;
-
         if (numeroExistente(numero)) {
             System.out.println("Telefone já cadastrado. Refaça a operação.");
         } else {
-            novoFone.setIdTelefone(idContato++);
             novoFone.setDdd(extrairDdd(numero));
             novoFone.setNumero(extrairNumero(numero));
             this.lista.add(novoFone);
+            long idEhIndice = ((long) this.lista.indexOf(novoFone) + 1);
+            novoFone.setIdTelefone(idEhIndice);
         }
-
-        sc.close();
     }
-
 
     public void editarTelefone() {
         Scanner sc = new Scanner(System.in);
@@ -143,8 +134,6 @@ public class Contato {
         } else {
             System.out.println("Informe o novo número com ddd: ");
             String novo = sc.nextLine();
-
-            sc.close();
 
             for (Telefone tel : this.lista) {
                 if (buscaTelefone(id) == tel) {
@@ -161,8 +150,6 @@ public class Contato {
         Scanner sc = new Scanner(System.in);
         System.out.println("Informe o id do telefone que deseja editar: ");
         Long id = sc.nextLong();
-
-        sc.close();
 
 
         if (buscaTelefone(id) == null) {

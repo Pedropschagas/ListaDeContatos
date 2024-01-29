@@ -87,14 +87,18 @@ public class Agenda {
         aux = buscaContato(Long.valueOf(sc.next()));
 
         //Inserção para organizar os espaços antes do telefone, na saída.
-        String quantidadeEspacos = " ".repeat(String.valueOf(aux.getIdContato()).length() + 1);
 
 
-        System.out.println(aux.getIdContato() + " | " + aux.getNome() + " " + aux.getSobreNome());
-        if (!aux.getLista().isEmpty())
-            for (Telefone numero : aux.getLista()) {
-                System.out.println(quantidadeEspacos + "| " + numero.getIdTelefone() + " - " + numero.getDdd() + numero.getNumero());
-            }
+        if (aux != null) {
+            String quantidadeEspacos = " ".repeat(String.valueOf(aux.getIdContato()).length() + 1);
+            System.out.println(aux.getIdContato() + " | " + aux.getNome() + " " + aux.getSobreNome());
+            if (!aux.getLista().isEmpty())
+                for (Telefone numero : aux.getLista()) {
+                    System.out.println(quantidadeEspacos + "| " + numero.getIdTelefone() + " - " + numero.getDdd() + numero.getNumero());
+                }
+        } else {
+            System.out.println("Contato não encontrado. Tente novamente.");
+        }
     }
 
     public void escreverAgenda() {

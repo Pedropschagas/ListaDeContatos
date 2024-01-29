@@ -46,6 +46,7 @@ public class Main {
                     case 4:
                         agenda.exibirTelefones();
                         pausa(1300);
+                        pausaEnter();
                         break;
                     case 5:
                         System.out.println("Até Logo!!");
@@ -69,6 +70,12 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void pausaEnter(){
+        System.out.println("Pressione Enter para continuar...");
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
     }
 }
 

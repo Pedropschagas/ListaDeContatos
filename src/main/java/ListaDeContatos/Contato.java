@@ -157,6 +157,8 @@ public class Contato {
         System.out.println("Informe o id do telefone que deseja remover: ");
         Long id = sc.nextLong();
 
+
+
         if (buscaTelefone(id) == null) {
             System.out.println("id não encontrado");
         } else {

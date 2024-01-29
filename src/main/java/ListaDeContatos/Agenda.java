@@ -25,6 +25,16 @@ public class Agenda {
         return getIdListaContato();
     }
 
+    public void retomadaId() {
+        Long retomada = 0L;
+        for (Contato cont : this.contatos) {
+            if (cont.getIdContato() > retomada) {
+                retomada = cont.getIdContato();
+            }
+        }
+        this.idListaContato = retomada;
+    }
+
 
     public List<Contato> getContatos() {
         return contatos;
@@ -133,14 +143,15 @@ public class Agenda {
                     }
                 }
                 this.contatos.add(novoContato);
+
             }
+            retomadaId();
         }catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Olá! Seja bem vindo à Lista de Contatos.");
         }
 
-    }
 
-//    public void lerAgenda();
+    }
 
     //Verificações
     public static boolean validaString(String string) {
@@ -186,6 +197,7 @@ public class Agenda {
             System.out.println("Nome inválido. Digite o sobrenome do contato.");
             string = sc.nextLine();
         }
+
         novoContato.setSNome(string);
         novoContato.setIdContato(setIdListaContato());
 

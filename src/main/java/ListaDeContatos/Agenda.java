@@ -280,7 +280,7 @@ public class Agenda {
                                 }
                                 break;
                             case 3:
-                                cont.editarTelefone();
+                                cont.editarTelefone(buscado);
                                 break;
                             case 4:
                                 Telefone novo = cont.recebeTelefone();
@@ -292,7 +292,7 @@ public class Agenda {
                                 }
                                 break;
                             case 5:
-                                cont.removerTelefone();
+                                cont.removerTelefone(buscado);
                                 break;
                             case 6:
                                 break;

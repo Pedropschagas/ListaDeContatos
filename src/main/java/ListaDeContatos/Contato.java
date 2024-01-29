@@ -129,8 +129,16 @@ public class Contato {
     }
 
 
-    public void editarTelefone() {
+    public void editarTelefone(Contato contatoEscolhido) {
         Scanner sc = new Scanner(System.in);
+        if (contatoEscolhido != null) {
+            String quantidadeEspacos = " ".repeat(String.valueOf(contatoEscolhido.getIdContato()).length() + 1);
+            System.out.println(contatoEscolhido.getIdContato() + " | " + contatoEscolhido.getNome() + " " + contatoEscolhido.getSobreNome());
+            if (!contatoEscolhido.getLista().isEmpty())
+                for (Telefone numero : contatoEscolhido.getLista()) {
+                    System.out.println(quantidadeEspacos + "| " + numero.getIdTelefone() + " - " + numero.getDdd() + numero.getNumero());
+                }
+        }
         System.out.println("Informe o id do telefone que deseja editar: ");
         Long id = sc.nextLong();
 
@@ -152,18 +160,27 @@ public class Contato {
 
     }
 
-    public void removerTelefone() {
+    public void removerTelefone(Contato contatoEscolhido) {
         Scanner sc = new Scanner(System.in);
+        if (contatoEscolhido != null) {
+            String quantidadeEspacos = " ".repeat(String.valueOf(contatoEscolhido.getIdContato()).length() + 1);
+            System.out.println(contatoEscolhido.getIdContato() + " | " + contatoEscolhido.getNome() + " " + contatoEscolhido.getSobreNome());
+            if (!contatoEscolhido.getLista().isEmpty())
+                for (Telefone numero : contatoEscolhido.getLista()) {
+                    System.out.println(quantidadeEspacos + "| " + numero.getIdTelefone() + " - " + numero.getDdd() + numero.getNumero());
+                }
+        }
         System.out.println("Informe o id do telefone que deseja remover: ");
         Long id = sc.nextLong();
+
 
 
 
         if (buscaTelefone(id) == null) {
             System.out.println("id não encontrado");
         } else {
-            Telefone aux = buscaTelefone(id);
-            this.lista.remove(aux);
+            Telefone telaux = buscaTelefone(id);
+            this.lista.remove(telaux);
             System.out.println("Número de telefone removido.");
         }
     }
